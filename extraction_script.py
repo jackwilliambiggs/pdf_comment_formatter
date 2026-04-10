@@ -2,6 +2,7 @@ from PyPDF2 import PdfReader
 import pdfplumber
 import re
 from pprint import pprint
+import csv
 
 PDF_PATH = "long_sample_with_comments.pdf"
 
@@ -172,3 +173,34 @@ if __name__ == "__main__":
 
     print("\n✅ FINAL OUTPUT:\n")
     pprint(results)
+    
+    
+    # ------------------------------------------------------------
+    # ✅ SAVE RESULTS TO CSV
+    # ------------------------------------------------------------
+    import csv
+
+    CSV_OUTPUT_PATH = "extracted_comments.csv"
+
+    with open(CSV_OUTPUT_PATH, mode="w", newline="", encoding="utf-8") as csvfile:
+        writer = csv.writer(csvfile)
+
+        # Header
+        writer.writerow([
+            "comment_number",
+            "page_comment_occurs",
+            "comment",
+            "sentence_comment_occurs"
+        ])
+
+        # Rows
+        for idx, item in enumerate(results, start=1):
+            writer.writerow([
+                idx,
+                item["page"],
+                item["comment"],
+                item["sentence"]
+            ])
+
+    print(f"\n📄 CSV saved to: {CSV_OUTPUT_PATH}")
+
