@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: PDF Comment Formatter Serverless Application
+
+Resources:
+  UploadPdfFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambdas/upload_pdf/handler.lambda_handler
+      Runtime: python3.8
+      CodeUri: lambdas/upload_pdf/
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref PdfBucket
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /upload
+            Method: post
+
+  ExtractCommentsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambdas/extract_comments/handler.lambda_handler
+      Runtime: python3.8
+      CodeUri: lambdas/extract_comments/
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref PdfBucket
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /extract
+            Method: post
+
+  PdfBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'pdf-comments-${AWS::Region}-${AWS::AccountId}'
+
+Outputs:
+  UploadPdfFunction:
+    Description: "Upload PDF Lambda Function ARN"
+    Value: !GetAtt UploadPdfFunction.Arn
+
+  ExtractCommentsFunction:
+    Description: "Extract Comments Lambda Function ARN"
+    Value: !GetAtt ExtractCommentsFunction.Arn
+
+  PdfBucket:
+    Description: "S3 Bucket for PDF uploads"
+    Value: !Ref PdfBucket

@@ -1,0 +1,13 @@
+version = 0.1
+
+[default]
+profile = "default"
+region = "us-east-1"
+
+[default.deploy]
+stack_name = "pdf-comment-formatter"
+s3_bucket = "your-s3-bucket-name"
+s3_prefix = "sam/"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
